@@ -65,4 +65,35 @@ const obtenerTodasZonas = async (req, res) => {
   }
 };
 
-module.exports = { crearZonaMapa, obtenerZona, obtenerTodasZonas };
+const eliminarZona = async (req, res) => {
+  try {
+    const { latitud, altitud, longitud } = req.params;
+
+    // Validar que los parámetros sean números
+    if (isNaN(latitud) || isNaN(altitud) || isNaN(longitud)) {
+      return res.status(400).json({ error: "Las coordenadas deben ser números válidos" });
+    }
+
+    const zona = await ExamenU2API.findOne({
+      where: {
+        latitud: parseFloat(latitud),
+        altitud: parseFloat(altitud),
+        longitud: parseFloat(longitud)
+      }
+    });
+
+    if (!zona) {
+      return res.status(404).json({ error: "Zona no encontrada" });
+    }
+
+    // Eliminar la zona
+    await zona.destroy();
+
+    res.status(200).json({ mensaje: "Zona eliminada correctamente" });
+  } catch (error) {
+    console.error('Error al eliminar la zona:', error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+};
+
+module.exports = { crearZonaMapa, obtenerZona, obtenerTodasZonas, eliminarZona };

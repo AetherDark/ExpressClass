@@ -78,6 +78,10 @@ Endpoints
     bash
     curl http://localhost:2025/api/mapa/all
 
+    DELETE /api/mapa/:latitud/:altitud/:longitud**: Eliminar una zona por sus coordenadas.
+    bash
+    curl -X DELETE http://localhost:2025/api/mapa/19.4326/2240/-99.1332
+
 Estructura del Proyecto
 Copy
 
