@@ -74,6 +74,10 @@ Endpoints
     bash
     curl http://localhost:2025/api/mapa/19.4326/2240/-99.1332
 
+    GET /api/mapa/all**: Obtener todas las zonas registradas.
+    bash
+    curl http://localhost:2025/api/mapa/all
+
 Estructura del Proyecto
 Copy
 

@@ -50,4 +50,19 @@ const obtenerZona = async (req, res) => {
   }
 };
 
-module.exports = { crearZonaMapa, obtenerZona };
+const obtenerTodasZonas = async (req, res) => {
+  try {
+    const zonas = await ExamenU2API.findAll();
+    
+    if (zonas.length === 0) {
+      return res.status(404).json({ mensaje: "No hay zonas registradas" });
+    }
+
+    res.status(200).json(zonas);
+  } catch (error) {
+    console.error('Error al obtener las zonas:', error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+};
+
+module.exports = { crearZonaMapa, obtenerZona, obtenerTodasZonas };
