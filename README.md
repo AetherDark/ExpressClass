@@ -1,96 +1,142 @@
-markdown
-Copy
-
 # API para Gestión de Zonas Geográficas
 
-API para crear y gestionar zonas geográficas con Express, Sequelize y MySQL.
+API RESTful construida con Express.js, Sequelize ORM y MySQL para la gestión de zonas geográficas con coordenadas e información de ubicación.
 
 ## Requisitos Previos
-- Node.js v18+
-- MySQL instalado y configurado.
-- npm o yarn.
 
-## Instalación
+- Node.js (v18 o superior)
+- MySQL Server (v8.0 recomendado)
+- npm (Gestor de Paquetes de Node)
 
-1. **Clonar el repositorio**:
-   ```bash
-   git clone [URL_DEL_REPOSITORIO]
-   cd nombre-del-repositorio
+## Guía de Instalación
 
-    Instalar dependencias:
-    bash
-    Copy
+### 1. Configuración de la Base de Datos
 
-    npm install
+1. Instala MySQL Server si aún no lo tienes
+2. Crea una nueva base de datos:
+```bash
+mysql -u root -p
+```
+```sql
+CREATE DATABASE ExamenU2;
+```
 
-    Configurar la base de datos:
+### 2. Configuración del Proyecto
 
-        Crea una base de datos en MySQL llamada ExamenU2.
+1. Clona el repositorio e instala las dependencias:
+```bash
+git clone [URL_DEL_REPOSITORIO]
+cd Express
+npm install
+```
 
-        Actualiza config/config.json con tus credenciales de MySQL:
-        json
-        Copy
+2. Configura la conexión a la base de datos:
+   - Abre `config/config.json`
+   - Actualiza la configuración de desarrollo:
+```json
+{
+  "development": {
+    "username": "root",
+    "password": "tu_contraseña",
+    "database": "ExamenU2",
+    "host": "localhost",
+    "dialect": "mysql",
+    "port": "3306"
+  }
+}
+```
 
-        {
-          "development": {
-            "username": "root",
-            "password": "tu_contraseña",
-            "database": "ExamenU2",
-            "host": "localhost",
-            "dialect": "mysql"
-          }
-        }
+3. Ejecuta las migraciones de la base de datos:
+```bash
+npx sequelize-cli db:migrate
+```
 
-    Ejecutar migraciones:
-    bash
-    Copy
+4. Inicia el servidor de desarrollo:
+```bash
+npm run dev
+```
 
-    npx sequelize-cli db:migrate
+El servidor se iniciará en `http://localhost:2025`
 
-    Iniciar el servidor:
-    bash
-    Copy
+## Estructura de la Base de Datos
 
-    npm run dev
+### Tabla: ExamenU2APIs
 
-Uso
-Endpoints
+| Columna   | Tipo    | Descripción                    |
+|-----------|---------|--------------------------------|
+| id        | INTEGER | Clave Primaria, Auto-increment |
+| latitud   | FLOAT   | Coordenada de latitud         |
+| longitud  | FLOAT   | Coordenada de longitud        |
+| altitud   | FLOAT   | Altitud en metros             |
+| nombre    | TEXT    | Nombre de la ubicación        |
+| direccion | STRING  | Dirección de la ubicación     |
+| createdAt | DATE    | Fecha de creación del registro|
+| updatedAt | DATE    | Fecha de última actualización |
 
-    POST /api/mapa/new: Crear una nueva zona.
-    bash
-    Copy
+## Endpoints de la API
 
-    curl -X POST http://localhost:2025/api/mapa/new \
-    -H "Content-Type: application/json" \
-    -d '{
-      "latitud": 19.4326,
-      "longitud": -99.1332,
-      "altitud": 2240,
-      "nombre": "CDMX",
-      "direccion": "Zócalo"
-    }'
+### Crear Nueva Zona
+- **POST** `/api/mapa/new`
+- **Content-Type:** `application/json`
+- **Cuerpo de la Petición:**
+```json
+{
+  "latitud": 19.4326,
+  "longitud": -99.1332,
+  "altitud": 2240,
+  "nombre": "CDMX",
+  "direccion": "Zócalo"
+}
+```
+- **Respuesta:** Devuelve el objeto de la zona creada con estado 201
 
-    GET /api/mapa/:latitud/:altitud/:longitud**: Obtener una zona por sus coordenadas.
-    bash
-    curl http://localhost:2025/api/mapa/19.4326/2240/-99.1332
+### Obtener Zona por Coordenadas
+- **GET** `/api/mapa/:latitud/:altitud/:longitud`
+- **Ejemplo:** `/api/mapa/19.4326/2240/-99.1332`
+- **Respuesta:** Devuelve el objeto de la zona si se encuentra, 404 si no existe
 
-    GET /api/mapa/all**: Obtener todas las zonas registradas.
-    bash
-    curl http://localhost:2025/api/mapa/all
+### Obtener Todas las Zonas
+- **GET** `/api/mapa/all`
+- **Respuesta:** Devuelve un array con todas las zonas registradas
 
-    DELETE /api/mapa/:latitud/:altitud/:longitud**: Eliminar una zona por sus coordenadas.
-    bash
-    curl -X DELETE http://localhost:2025/api/mapa/19.4326/2240/-99.1332
+### Eliminar Zona
+- **DELETE** `/api/mapa/:latitud/:altitud/:longitud`
+- **Ejemplo:** `/api/mapa/19.4326/2240/-99.1332`
+- **Respuesta:** Devuelve mensaje de éxito si se elimina, 404 si no existe
 
-Estructura del Proyecto
-Copy
+## Migraciones
 
-├── src/
-│   ├── controllers/
-│   ├── routes/
-│   ├── app.js
-│   └── db.js
-├── models/
-├── migrations/
-├── config/
-└── .sequelizerc
+El proyecto incluye dos migraciones principales:
+
+1. **Migración Inicial (20250309200324-create-examen-u-2-api.js)**
+   - Crea la tabla ExamenU2APIs
+   - Establece la estructura básica con campos de coordenadas y ubicación
+
+2. **Migración de Timestamps (20250309202926-add-createdAt-updatedAt-to-examenu2api.js)**
+   - Añade las columnas createdAt y updatedAt
+   - Implementa la gestión automática de timestamps
+
+Para gestionar las migraciones:
+- Ejecutar migraciones: `npx sequelize-cli db:migrate`
+- Deshacer última migración: `npx sequelize-cli db:migrate:undo`
+- Deshacer todas las migraciones: `npx sequelize-cli db:migrate:undo:all`
+
+## Manejo de Errores
+
+La API implementa un manejo adecuado de errores:
+- 400: Solicitud Incorrecta (entrada inválida)
+- 404: No Encontrado
+- 500: Error Interno del Servidor
+
+## Desarrollo
+
+Para ejecutar en modo desarrollo con recarga automática:
+```bash
+npm run dev
+```
+
+Para producción:
+```bash
+npm start
+```
+```
