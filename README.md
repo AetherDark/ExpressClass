@@ -70,6 +70,10 @@ Endpoints
       "direccion": "Zócalo"
     }'
 
+    GET /api/mapa/:latitud/:altitud/:longitud**: Obtener una zona por sus coordenadas.
+    bash
+    curl http://localhost:2025/api/mapa/19.4326/2240/-99.1332
+
 Estructura del Proyecto
 Copy
 

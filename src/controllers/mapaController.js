@@ -1,4 +1,4 @@
-const { ExamenU2API } = require('../../models'); // Importa desde models/index.js
+const { ExamenU2API } = require('../../models');
 
 const crearZonaMapa = async (req, res) => {
   try {
@@ -23,4 +23,31 @@ const crearZonaMapa = async (req, res) => {
   }
 };
 
-module.exports = { crearZonaMapa };
+const obtenerZona = async (req, res) => {
+  try {
+    const { latitud, altitud, longitud } = req.params;
+
+    if (isNaN(latitud) || isNaN(altitud) || isNaN(longitud)) {
+      return res.status(400).json({ error: "Las coordenadas deben ser números válidos" });
+    }
+
+    const zona = await ExamenU2API.findOne({
+      where: {
+        latitud: parseFloat(latitud),
+        altitud: parseFloat(altitud),
+        longitud: parseFloat(longitud)
+      }
+    });
+
+    if (!zona) {
+      return res.status(404).json({ error: "Zona no encontrada" });
+    }
+
+    res.status(200).json(zona);
+  } catch (error) {
+    console.error('Error al obtener la zona:', error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+};
+
+module.exports = { crearZonaMapa, obtenerZona };
