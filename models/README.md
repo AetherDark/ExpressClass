@@ -114,4 +114,3 @@ sequelize.sync({ force: true }) // ¡CUIDADO! Recrea las tablas
 3. **Campos:**
    - Definir tipos de datos apropiados
    - Establecer restricciones necesarias (unique, allowNull, etc.)
-```

@@ -139,4 +139,3 @@ Para producción:
 ```bash
 npm start
 ```
-```
